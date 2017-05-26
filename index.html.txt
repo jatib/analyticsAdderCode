@@ -1,0 +1,6 @@
+!DOCTYPE HTML>
+<html>
+<head>
+	<title>Home</title>
+	<script type="text/javascript">
+	</script>
