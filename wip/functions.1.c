@@ -15,9 +15,7 @@ void crearArbol(struct dirent *this,int rows,char fileName[500][500]);
 int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char code[500]);
 //
 void volcarFichero(int rows,char fileName[500][500]);
-//void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT[500][500]);
 //
-void arbol(int rows,char fileName[500][500],char directorioTXT[500][500]);
 /***************************************************************/
 
 int main()
@@ -135,6 +133,7 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 			if (archvio != NULL)
 			{
 				/*************************************************************/
+				//Declare counters
 				int n = 0,lastNotNuLLIndex,k=0;
 				
 				lastNotNuLLIndex = strlen(query);
@@ -147,11 +146,9 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 						characters = fgetc(archvio);
 						fputc(characters,archivoDeVolcado);
 						if(characters == query[n]){
-							//fputc(characters,archivoDeVolcado);
 							n++;
 						}
 							else if(n!=0){
-								//fputc(characters,archivoDeVolcado);
 								n=0;
 							}
 						if(characters == EOF)break;
@@ -168,9 +165,7 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 						n++;
 					}
 
-					//printf("%c",characters);
 				}
-				//if(n==lastNotNuLLIndex)printf("Find the query \"%s\", on archvio: %s\nAt line:%d\nCounted characters: %d\n\n\n",query,fileName[z],lines,k-strlen(query));
 				/*************************************************************/
 			}
 
@@ -195,27 +190,18 @@ void volcarFichero(int rows,char fileName[500][500]){
 	{
 		if(verificar(fileName[z],".html.txt")){
 
-			printf("%s\n",fileName[z]);
-
 			int characters;
-			//int limite;
 			char nombre[500];
 
 			for (int i = 0; i < strlen(fileName[z])-3; ++i)
 			{
 				if(i<strlen(fileName[z])-4){
 					nombre[i] = fileName[z][i];
-					printf("%c",fileName[z][i] );	
 				}else{
 
 					nombre[i]=0;
-					//printf("%c",fileName[z][i] );
 				}	
 			}
-
-			//strcpy(nombre,fileName[z]);
-
-			//printf("\n%s\n",nombre);
 
 			archvio = fopen(fileName[z],"r+");
 			archivoDeVolcado = fopen(nombre,"w+");
@@ -237,42 +223,8 @@ void volcarFichero(int rows,char fileName[500][500]){
 	fclose(archvio);
 	fclose(archivoDeVolcado);
 }
-/****
 
-/*********************************************************
-void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT[500][500]){
-	
-	FILE *archivo;
-	FILE *archivoDeVolcado;
-
-	for (int z = 0; z < rows; ++z)
-	{
-		printf("ciclo:%d\n%s\n",z,directorioTXT[z]);
-
-		for (int i = 0; i < limit; ++i)
-		{
-			if((verificar(directorioTXT[z],fileName[i])) && !(verificar(fileName[i],".txt")) ){
-
-				int characters;
-				int limite;
-
-				//printf("ciclo:%d\n%s\n%s\n",i,fileName[i],directorioTXT[z] );
-
-				archivo = fopen(fileName[z],"r+");
-				archivoDeVolcado = fopen(directorioTXT[i],"w+");
-
-				if (archivoDeVolcado != NULL)
-				{
-					while( (characters = fgetc(archivoDeVolcado)) != EOF){
-						fputc(characters,archivo);
-					}
-				}
-			}
-		}
-		
-	}
-}
-*********************************************************/
+/*********************************************************/
 int verificar( char *cadena, char *subcadena )
 {
    char *tmp = cadena;

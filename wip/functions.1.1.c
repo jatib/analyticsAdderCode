@@ -18,6 +18,8 @@ void volcarFichero(int rows,char fileName[500][500]);
 //void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT[500][500]);
 //
 void arbol(int rows,char fileName[500][500],char directorioTXT[500][500]);
+//
+int codeChecker(int rows,char code[500],char fileName[500][500],int incidenceCounter[500]);
 /***************************************************************/
 
 int main()
@@ -27,6 +29,7 @@ int main()
 	char path[] = ".";
 	char directorio[LIMIT][LIMIT],query[LIMIT],fileName[LIMIT][LIMIT];
 	char directorioTXT[LIMIT][LIMIT],code[LIMIT],userID[13];
+	int incidenceCounter[LIMIT];
 	struct dirent *entite;
 	int rows=0,s=0;
 
@@ -90,6 +93,39 @@ void codeConstruct(int interruptor,char code[500]){
 }
 
 /*********************************************************/
+int codeChecker(int rows,char code[500],char fileName[500][500],int incidenceCounter[500]){
+	
+	char line[10000];
+    char *p;
+    FILE *fp;
+    int i=0;
+    char aux[10000];
+    
+    for (int j = 0; j < count; ++j)
+    {
+    	fp = fopen(fileName[j],"rt");
+
+	    fgets(line,10000,fp);
+
+	    while(!feof(fp)){
+	                   
+           i++;
+           
+           if(p=strstr(line,code)) { /* tomo como subpalabra "addres" 
+           si se encuentra, sscanf guarda en aux la palabra que contiene a la subpalabra "addres"*/
+             sscanf(p,"%s",aux);
+             }
+             if(!strcmp(aux,code)) /* comparo las palabras, y en caso de ser iguales sale del while */
+                 break;
+           fgets(line,10000,fp);
+	    }
+	    
+	    printf("\nline: %d\n",i);
+    }
+    
+
+}
+/*********************************************************/
 void arbol(int rows,char fileName[500][500],char directorioTXT[500][500]){
 	for (int z = 0; z < rows; ++z)
 	{
@@ -135,7 +171,7 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 			if (archvio != NULL)
 			{
 				/*************************************************************/
-				int n = 0,lastNotNuLLIndex,k=0;
+				int n = 0,lastNotNuLLIndex,k=0,incidencias=0;
 				
 				lastNotNuLLIndex = strlen(query);
 
@@ -156,16 +192,17 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 							}
 						if(characters == EOF)break;
 						k++;
-						if(characters=='\n' || characters=='\00')
-							lines++;
+						/*if(characters=='\n' || characters=='\00')
+							lines++;*/
 					}
 
-					if(n == lastNotNuLLIndex){
+					if(n == lastNotNuLLIndex && incidencias==0){
 						for (int i = 0; i < strlen(code); ++i)
 						{
 							fputc(code[i],archivoDeVolcado);	
 						}
 						n++;
+						incidencias++;
 					}
 
 					//printf("%c",characters);
@@ -195,27 +232,20 @@ void volcarFichero(int rows,char fileName[500][500]){
 	{
 		if(verificar(fileName[z],".html.txt")){
 
-			printf("%s\n",fileName[z]);
-
 			int characters;
-			//int limite;
 			char nombre[500];
 
 			for (int i = 0; i < strlen(fileName[z])-3; ++i)
 			{
 				if(i<strlen(fileName[z])-4){
 					nombre[i] = fileName[z][i];
-					printf("%c",fileName[z][i] );	
 				}else{
 
 					nombre[i]=0;
-					//printf("%c",fileName[z][i] );
 				}	
 			}
 
-			//strcpy(nombre,fileName[z]);
 
-			//printf("\n%s\n",nombre);
 
 			archvio = fopen(fileName[z],"r+");
 			archivoDeVolcado = fopen(nombre,"w+");
@@ -237,42 +267,8 @@ void volcarFichero(int rows,char fileName[500][500]){
 	fclose(archvio);
 	fclose(archivoDeVolcado);
 }
-/****
 
-/*********************************************************
-void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT[500][500]){
-	
-	FILE *archivo;
-	FILE *archivoDeVolcado;
-
-	for (int z = 0; z < rows; ++z)
-	{
-		printf("ciclo:%d\n%s\n",z,directorioTXT[z]);
-
-		for (int i = 0; i < limit; ++i)
-		{
-			if((verificar(directorioTXT[z],fileName[i])) && !(verificar(fileName[i],".txt")) ){
-
-				int characters;
-				int limite;
-
-				//printf("ciclo:%d\n%s\n%s\n",i,fileName[i],directorioTXT[z] );
-
-				archivo = fopen(fileName[z],"r+");
-				archivoDeVolcado = fopen(directorioTXT[i],"w+");
-
-				if (archivoDeVolcado != NULL)
-				{
-					while( (characters = fgetc(archivoDeVolcado)) != EOF){
-						fputc(characters,archivo);
-					}
-				}
-			}
-		}
-		
-	}
-}
-*********************************************************/
+/*********************************************************/
 int verificar( char *cadena, char *subcadena )
 {
    char *tmp = cadena;

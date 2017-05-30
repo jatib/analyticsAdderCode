@@ -1,92 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <dirent.h>
-#define LIMIT 500
-/*********************************************************/
-//For verify regularities on a chain
 int verificar( char *cadena, char *subcadena );
-//For construct de analytics code from ID
-void codeConstruct(int interruptor, char code[500]);
-//
+void codeConstruct(char userID[13], char code[500]);
 void crearArbol(struct dirent *this,int rows,char fileName[500][500]);
-//
 int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char code[500]);
-//
-void volcarFichero(int rows,char fileName[500][500]);
-//void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT[500][500]);
-//
+void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT[500][500]);
 void arbol(int rows,char fileName[500][500],char directorioTXT[500][500]);
-/***************************************************************/
 
-int main()
-{
-	DIR *dir;
-	struct dirent *ent;
-	char path[] = ".";
-	char directorio[LIMIT][LIMIT],query[LIMIT],fileName[LIMIT][LIMIT];
-	char directorioTXT[LIMIT][LIMIT],code[LIMIT],userID[13];
-	struct dirent *entite;
-	int rows=0,s=0;
-
-	codeConstruct(0,code);
-
-	dir = opendir(path);
-		if(dir == NULL);
-			//error("Imposible abrir directorio");
-
-		//proceso leer directorio y construir arbol
-		while ((entite = readdir (dir)) != NULL)
-	    {
-	    	crearArbol(entite,rows,fileName);
-	    	rows++;
-	    }
-
-	    
-	    //arbol(rows,fileName,directorioTXT);
-
-	    s = leerArbol(rows,fileName,directorioTXT,code);
-	    volcarFichero(rows,fileName);
-	    
-	    /*if(s != 0){
-		    for (int i = 0; i < s; ++i)
-		    {
-		    	if(directorioTXT[i] != NULL)
-		    		printf("ciclo:%d\n%s\n",i,directorioTXT[i]);
-		    }
-		    volcarFichero(s,rows,fileName,directorioTXT);
-		}else printf("No hay archivos HTML\n");*/
-	    
-
-	closedir (dir);
-
-    return EXIT_SUCCESS;
-}
-
-/***************************************************************/
-
-void codeConstruct(int interruptor,char code[500]){
-	
+void codeConstruct(char userID[13], char code[500]){
 	char script[]="\n<script>\n\t(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){\n\t\t(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),\n\t\tm=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)\n\t\t})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');\n\n\tga('create', '";
 	char scriptEnd[]="', 'auto');\n\tga('send', 'pageview');\n\n</script>\n";
-
-	if(interruptor){
-		char userID[13];
-
-		printf("Give a User ID:\n");
-		scanf("%s",userID);	
-
-		strcat(code,script);
-		strcat(code,userID);
-		strcat(code,scriptEnd);
-	}else{
-		char userID[]="UA-77977334-1";
-
-		strcat(code,script);
-		strcat(code,userID);
-		strcat(code,scriptEnd);
-	}
+	strcat(code,script);
+	strcat(code,userID);
+	strcat(code,scriptEnd);
 }
 
 /*********************************************************/
@@ -95,8 +19,8 @@ void arbol(int rows,char fileName[500][500],char directorioTXT[500][500]){
 	{
 		if(verificar(fileName[z],".html") && !verificar(fileName[z],".txt")){
 
-			strcat(directorioTXT[z],fileName[z]);
-			strcat(directorioTXT[z],".txt");
+			/*directorioTXT[z] = strcat(directorioTXT[z],fileName[z]);
+			directorioTXT[z] = strcat(directorioTXT[z],".txt");*/
 		}
 	}
 
@@ -121,16 +45,23 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 	{
 		if(verificar(fileName[z],".html") && !verificar(fileName[z],".txt")){
 
+			s++;
+
 			int characters,lines=0;
 			int elefanteRosa = 0;
 			int limite;
 			char nombreArchivoDeVolcado[500];
 
-			strcat(directorioTXT[s],fileName[z]);
-			strcat(directorioTXT[s],".txt");
+			//nombreArchivoDeVolcado[0] = "\0";
 
-			archvio = fopen(fileName[z],"r+");
-			archivoDeVolcado = fopen(directorioTXT[s],"w+");
+			strcat(directorioTXT[z],fileName[z]);
+			strcat(directorioTXT[z],".txt");
+
+			//int strangeNoUsedVar=0;
+
+
+			archvio = fopen(fileName[z],"r");
+			archivoDeVolcado = fopen(directorioTXT[z],"w+");
 
 			if (archvio != NULL)
 			{
@@ -174,8 +105,6 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 				/*************************************************************/
 			}
 
-			s++;
-
 		}
 	}
 
@@ -184,62 +113,7 @@ int leerArbol(int rows,char fileName[500][500],char directorioTXT[500][500],char
 
 	return s;
 }
-/********************************************ESTAS TRABAJANDO EN ESTA FUNCION
-EL PROBLEMA RESIDE EN EL NOMBRE DE VUELTA DEL ARCHIVO DE VOLCADO*/
-void volcarFichero(int rows,char fileName[500][500]){
-
-	FILE *archvio;
-	FILE *archivoDeVolcado;
-
-	for (int z = 0; z < rows; ++z)
-	{
-		if(verificar(fileName[z],".html.txt")){
-
-			printf("%s\n",fileName[z]);
-
-			int characters;
-			//int limite;
-			char nombre[500];
-
-			for (int i = 0; i < strlen(fileName[z])-3; ++i)
-			{
-				if(i<strlen(fileName[z])-4){
-					nombre[i] = fileName[z][i];
-					printf("%c",fileName[z][i] );	
-				}else{
-
-					nombre[i]=0;
-					//printf("%c",fileName[z][i] );
-				}	
-			}
-
-			//strcpy(nombre,fileName[z]);
-
-			//printf("\n%s\n",nombre);
-
-			archvio = fopen(fileName[z],"r+");
-			archivoDeVolcado = fopen(nombre,"w+");
-
-			if (archivoDeVolcado != NULL)
-			{
-				/*************************************************************/
-				while( (characters = fgetc(archvio)) != EOF){
-
-					fputc(characters,archivoDeVolcado);
-
-				}
-				/*************************************************************/
-			}
-
-		}
-	}
-
-	fclose(archvio);
-	fclose(archivoDeVolcado);
-}
-/****
-
-/*********************************************************
+/*********************************************************/
 void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT[500][500]){
 	
 	FILE *archivo;
@@ -272,7 +146,7 @@ void volcarFichero(int rows,int limit,char fileName[500][500],char directorioTXT
 		
 	}
 }
-*********************************************************/
+/*********************************************************/
 int verificar( char *cadena, char *subcadena )
 {
    char *tmp = cadena;
